@@ -1,6 +1,8 @@
 import os
+import time
+from .db import DBManager
 from flask import Flask, request, redirect
-from .db import DBManager, Item
+
 
 app = Flask(__name__)
 mongo_db = DBManager()
@@ -15,8 +17,14 @@ def create_redirect_url(url):
 @app.route('/feedly/click', methods=["GET"])
 def feedly_click():
 	post_id = request.args.get('id')
-	post = mongo_db.set_clicked(post_id)
-	return redirect(create_redirect_url(post['url']))
+	post = mongo_db.get_item_by_id(post_id)
+	post_time = post['timestamp']
+	now = int(time.time())
+	if now - post_time < 60:
+		return redirect(create_redirect_url(post['url']))
+	else:
+		post = mongo_db.set_clicked(post_id)
+		return redirect(create_redirect_url(post['url']))
 
 
 if __name__ == '__main__':

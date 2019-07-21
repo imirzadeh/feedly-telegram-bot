@@ -1,5 +1,6 @@
 from .feedly import FeedlyAPI
 from .db import DBManager, Item
+import time
 
 
 STREAMS = [
@@ -24,6 +25,7 @@ class Core(object):
 		item.content = data.get("content", {}).get("content")
 		item.engagement = data.get("engagement", 0)
 		item.raw_feedly_json = data
+		item.time_stamp = int(time.time())
 		return item
 
 	def add_new_items(self, items):

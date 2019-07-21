@@ -19,6 +19,7 @@ class Item(object):
 		self.clicked = False
 		self.engagement = None
 		self.raw_feedly_json = None
+		self.time_stamp = None
 	
 	def to_dict(self):
 		return {
@@ -34,7 +35,8 @@ class Item(object):
 			'content': self.content,
 			'clicked': self.clicked,
 			'engagement': self.engagement,
-			'raw_feedly_json': self.raw_feedly_json
+			'raw_feedly_json': self.raw_feedly_json,
+			'timestamp': self.time_stamp,
 		}
 		
 	def to_json(self):
@@ -90,6 +92,11 @@ class DBManager(object):
 	def get_unpushed_items(self):
 		return list(self.items.find({'pushed': False}))
 	
+	def get_item_by_id(self, id):
+		id = ObjectId(id)
+		item = self.items.find_one({'_id': id})
+		return item
+		
 	def set_clicked(self, id):
 		id = ObjectId(id)
 		item = self.items.find_one_and_update({'_id': id}, {'$set': {'clicked': True}})
