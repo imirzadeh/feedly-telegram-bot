@@ -12,11 +12,10 @@ def create_redirect_url(url):
 	return url
 
 
-@app.route('/click', methods=["GET"])
+@app.route('/feedly/click', methods=["GET"])
 def feedly_click():
 	post_id = request.args.get('id')
 	post = mongo_db.set_clicked(post_id)
-	print(post)
 	return redirect(create_redirect_url(post['url']))
 
 
