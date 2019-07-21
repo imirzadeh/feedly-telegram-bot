@@ -11,5 +11,4 @@ def add_to_pocket(url):
 		"url": url
 	}
 	pocket_api = "https://getpocket.com/v3/add"
-	print("pocket data", pocket_data)
 	return requests.post(url=pocket_api, json=pocket_data, headers=json_header)
