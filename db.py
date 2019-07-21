@@ -16,6 +16,7 @@ class Item(object):
 		self.feedly_updated = False
 		self.status = "unread"
 		self.content = None
+		self.clicked = False
 	
 	def to_dict(self):
 		return {
@@ -29,6 +30,7 @@ class Item(object):
 			'visual': self.visual,
 			'feedly_updated': self.feedly_updated,
 			'content': self.content,
+			'clicked': self.clicked,
 		}
 		
 	def to_json(self):
@@ -46,6 +48,8 @@ class DBManager(object):
 		self.items.create_index('read')
 		self.items.create_index('pushed')
 		self.items.create_index('origin')
+		self.items.create_index('url')
+		self.items.create_index('clicked')
 		self.items.create_index('feedly_updated')
 	
 	def insert_items(self, items):
@@ -56,6 +60,11 @@ class DBManager(object):
 				new_items.append(str(res.inserted_id))
 		return new_items
 	
+	def update_click_status(self, items):
+		items = list(map(lambda x: ObjectId(x), items))
+		self.items.update_many({'_id': {'$in': items}}, {'$set': {'clicked': True}})
+		
+		
 	def update_items_read_status(self, items, status="read"):
 		items = list(map(lambda x: ObjectId(x), items))
 		if status == "read":
