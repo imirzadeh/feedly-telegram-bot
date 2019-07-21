@@ -17,6 +17,8 @@ class Item(object):
 		self.status = "unread"
 		self.content = None
 		self.clicked = False
+		self.engagement = None
+		self.raw_feedly_json = None
 	
 	def to_dict(self):
 		return {
@@ -31,6 +33,8 @@ class Item(object):
 			'feedly_updated': self.feedly_updated,
 			'content': self.content,
 			'clicked': self.clicked,
+			'engagement': self.engagement,
+			'raw_feedly_json': self.raw_feedly_json
 		}
 		
 	def to_json(self):

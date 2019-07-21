@@ -22,6 +22,8 @@ class Core(object):
 		item.summary = data.get("summary", {}).get("content")
 		item.visual = data.get("visual", {}).get("url", None)
 		item.content = data.get("content", {}).get("content")
+		item.engagement = data.get("engagement", 0)
+		item.raw_feedly_json = data
 		return item
 
 	def add_new_items(self, items):
