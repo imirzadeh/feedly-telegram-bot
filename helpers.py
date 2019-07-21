@@ -1,9 +1,12 @@
 import re
+from .settings import CLICK_TRACKER_URL
+
 
 def cleanhtml(raw_html):
 	cleanr = re.compile('<.*?>')
 	cleantext = re.sub(cleanr, '', raw_html)
 	return cleantext
+
 
 def build_menu(buttons,
 			   n_cols,
@@ -17,7 +20,13 @@ def build_menu(buttons,
 	return menu
 
 
+def add_tracker_url(data):
+	tracker_url = '{}/click?id={}'.format(CLICK_TRACKER_URL, data['_id'])
+	return tracker_url
+	
+
 def make_html(data):
+	data['url'] = add_tracker_url(data)
 	summary = data.get("summary")
 	if not summary:
 		summary = data.get("content")

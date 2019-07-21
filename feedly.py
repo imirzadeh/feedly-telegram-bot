@@ -20,4 +20,3 @@ class FeedlyAPI(object):
 			"entryIds": items
 		}
 		res = requests.post(url, json=data, headers=self.headers)
-		print(res.content)

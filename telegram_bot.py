@@ -1,12 +1,13 @@
 import logging
 import json
 
-from .helpers import build_menu, make_html
+from .helpers import build_menu, make_html, add_tracker_url
 from telegram import InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import Updater, CallbackQueryHandler, CommandHandler
 
 from .core import Core
 from .pocket import add_to_pocket
+from .settings import FEED_REFERESH_RATE_HOURS
 from .credentials import TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
@@ -29,9 +30,6 @@ def push_data(bot, items):
 		try:
 			reply_markup = InlineKeyboardMarkup(build_menu(get_menu(item['_id']), n_cols=2))
 			txt = make_html(item)
-			logger.info("---"*10)
-			logger.info(txt)
-			logger.info("---"*10)
 			bot.send_message(chat_id=TELEGRAM_CHAT_ID, text=txt, parse_mode='HTML', reply_markup=reply_markup)
 			pushed_items.append(item['_id'])
 		except Exception as e:
@@ -51,10 +49,8 @@ def callback_query(bot, update):
 	elif item_status == "pocket":
 		data = core.get_by_obj_ids([item_id])[0]
 		url = data.get("url")
-		print("url is ", url)
 		if url:
 			pocket = True
-			print(add_to_pocket(url).content)
 	
 	bot.delete_message(TELEGRAM_CHAT_ID, cq.message.message_id)
 	if pocket:
@@ -77,7 +73,6 @@ def attach_handlers():
 def callback_half_minute(bot, job):
 	items = core.fetch_new_items()
 	items = core.get_by_obj_ids(items)
-	logger.info("10 seconds callback! items are: ")
 	logger.info("new_items")
 	for i in items:
 		logger.info(i['_id'])
@@ -90,5 +85,5 @@ if __name__ == "__main__":
 	bot = updater.bot
 	attach_handlers()
 	j = updater.job_queue
-	job_minute = j.run_repeating(callback_half_minute, interval=60*60*6, first=0)
+	job_minute = j.run_repeating(callback_half_minute, interval=int(FEED_REFERESH_RATE_HOURS*3600), first=0)
 	updater.start_polling()

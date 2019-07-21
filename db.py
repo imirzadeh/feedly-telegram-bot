@@ -85,6 +85,11 @@ class DBManager(object):
 		
 	def get_unpushed_items(self):
 		return list(self.items.find({'pushed': False}))
+	
+	def set_clicked(self, id):
+		id = ObjectId(id)
+		item = self.items.find_one_and_update({'_id': id}, {'$set': {'clicked': True}})
+		return item
 		
 	def get_by_obj_ids(self, ids):
 		ids = list(map(lambda x: ObjectId(x), ids))
